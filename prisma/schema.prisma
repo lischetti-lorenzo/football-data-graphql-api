@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model League {
+  id        Int       @id @default(autoincrement())
+  name      String
+  code      String
+  areaName  String    @map("area_name")
+
+  teams     LeagueTeam[]
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  
+  @@map("leagues")
+}
+
+model Team {
+  id        Int     @id @default(autoincrement())
+  name      String
+  tla       String?
+  shortName String? @map("short_name")
+  areaName  String? @map("area_name")
+  address   String?
+  fDataId      Int     @map("fdata_id") // football data id
+
+  leagues   LeagueTeam[]
+  players   Player[]
+  coach     Coach?
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("teams")
+}
+
+model LeagueTeam {
+  leagueId  Int       @map("league_id")
+  league    League    @relation(fields: [leagueId], references: [id])
+  teamId	  Int 	    @map("team_id")
+  team      Team      @relation(fields: [teamId], references: [id])
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@id([leagueId, teamId	])
+  @@map("leagues_teams")
+}
+
+model Player {
+  id          Int       @id @default(autoincrement())
+  name        String?
+  position    String?
+  dateOfBirth DateTime? @map("birth_date")
+  nationality String?
+
+  teamId      Int?      @map("team_id")
+  team        Team?     @relation(fields: [teamId], references: [id])
+
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+  deletedAt DateTime?   @map("deleted_at")
+
+  @@map("players")
+}
+
+model Coach {
+  id          Int       @id @default(autoincrement())
+  name        String?
+  dateOfBirth DateTime? @map("birth_date")
+  nationality String?
+
+  teamId      Int?      @unique
+  team        Team?     @relation(fields: [teamId], references: [id])
+
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+  deletedAt DateTime?   @map("deleted_at")
+
+  @@map("coaches")
+}
