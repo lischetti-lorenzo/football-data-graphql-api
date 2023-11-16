@@ -49,6 +49,8 @@ $ docker-compose up
 
 If you prefer to run the project without Docker, follow these steps:
 
+Prerequisite: You must have postgres running on your local machine
+
 1. Clone the repository to your local machine and navigate to the project directory as described in the previous section.
 
 2. Install project dependencies:
