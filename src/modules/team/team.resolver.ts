@@ -12,10 +12,10 @@ export class TeamResolver {
     private readonly coachService: CoachService
   ) {}
 
-  @Query(() => Team, { name: 'team' })
+  @Query(() => Team, { name: 'team', nullable: true })
   async getTeam (
     @Args('name') name: string
-  ): Promise<Team>  {
+  ): Promise<Team | null>  {
     return this.teamService.findOne({
       where: {
         name
